@@ -1,0 +1,20 @@
+Events and Delegates
+
+-   If instead of sending an empty instance of EventArgs you'd like to send another object reference as an argument, you can do so by
+    declaring the object's class as an extension of the EventArgs class. Don't forget to modify every function that expects an EventArgs as an
+    argument, you need to change it for the new class' name.
+
+public class VideoEventArgs : EventArgs
+{
+    public Video Video { set; get; }
+}
+
+-   We don't have to create custom delegates, they are two already included in the newer versions of .NET Framework.
+    
+    EventHandler -> if you don't wish to send additional data.
+    // public event EventHandler VideoEncoded;
+    
+    EventHandler<TEventArgs> -> if you need extra arguments for your methods.
+    // public event EventHandler<VideoEventArgs> VideoEncoded;
+
+    Mosh-sensei recommends you use any of these instead.

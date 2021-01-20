@@ -1,0 +1,40 @@
+Synchronous Program Execution
+
+-   Program is executed line by line, one at the time.
+-   When a function is called, program execution has to wait until the function returns.
+
+public void DownloadHtml(string url)
+{
+    var webClient = new WebClient();
+    var html = webClient.DownloadString(url);
+
+    using (var streamWriter = new StreamWriter(@"c:\project\result.html"))
+    {
+        streamWriter.Write(html);
+    }
+}
+
+Asynchronous Program Execution
+
+-   When a function is called, program execution continues to the next line, WITHOUT waiting for the function to complete.
+-   Improves responsiveness.
+
+public async Task DownloadHtmlAsync(string url) // (1)
+{
+    var webClient = new WebClient();
+    var html = await webClient.DownloadStringTaskAsync(url); // (2) (3) (4)
+
+    using (var streamWriter = new StreamWriter(@"c:\project\result.html"))
+    {
+        streamWriter.Write(html);
+    } 
+}
+
+(1) Even though we declare the method as asynchronous, we still need to specify whatever it implements as such too. Otherwise, it won't work.
+(2) The Await Keyword tells the compiler that the instruction will take sometime. That way, it won't block the execution to that line, but
+    instead it'll return the command to the caller of the instruction, and thus continuing instruction execution.
+(3) Returning a Task of string is one of those time-consuming instructions, that's why we put the Await Keyword for it.
+(4) There are methods that already have their async implementation, like DownloadStringAsync().
+
+-   A Task Object does not represent a result, it represents a state of an asynchronous.
+-   You can only use the Await Keyword in an Async Method.

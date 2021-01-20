@@ -1,0 +1,126 @@
+-   Generics
+
+They allow us to create/use classes and methods that can manipulate any object element without boxing/unboxing performance penalty.
+You will mostly use Generics that are already available in the .NET Framework, but knowing how to create one may be needed sometimes.
+
+-   What if you wanted to create a Generic List that can receive any object element?
+
+public class GenericList<T> // Receives T between <>, "T" stands for "Template".
+{                           // While typing, we don't know what object will T represent.
+    public void Add(T value)
+    { ... } // Receives T and adds it to the list
+
+    public T this[int index]
+    { ... } // Accesses an element from the list by using an index
+}                            
+
+class Program
+{
+    static void Main(string []args)
+    {
+        var numbers = new GenericList<int>();   // You can use the same class to create different types of list.
+        numbers.Add(10);                        // That doesn't mean you could create a list that stores BOTH integers and Books...
+
+        var books = new GenericList<Books>();
+        books.Add(new Book());
+
+        System.Collections.Generic. // Here you can check .NET Framework's Generic classes and methods
+    }
+}
+
+-   What if you wanted to create a dictionary?
+
+public class GenericDictionary<TKey, TValue> // This class receives two parameters, which should be prefixed with a "T"
+{                                            // They represent the key to access a value, and the value to be accessed with the key
+    public void Add(TKey key, TValue value)
+    { ... }
+}
+
+class Program
+{
+    static void Main(string []args)
+    {
+        var dictionary = new GenericDictionary<string, Book>();
+        dictionary.Add("1234", new Book());
+    }
+}
+
+-   Constraint to an Interface
+
+Sometimes you may want to constraint the type of templates you're managing. For example,if you wanted to receive two values and return the
+greatest one, you'd have to constraint the type of elements you may receive to those who can implement a Comparable method.
+We can use both interfaces and generics to achieve that:
+
+public class Utilities
+{
+    public T Max<T>(T a, T b) where T : IComparable // Public method returns T, receives two T parameters (must include <T>).
+    {                                               // "where T : IComparable" -> the T parameters implement the CompareTo Method.
+        return a.CompareTo(b) > 0 ? a : b; // if (a - b) > 0  ->  a > b
+    }
+}
+
+You can define the constraint in methods without doing so for the class, or you can do it otherwise.
+
+public class Utilities<T> where T : IComparable
+{
+    public T Max<T>(T a, T b)
+    {
+        return a.CompareTo(b) > 0 ? a : b;
+    }
+}
+
+-   Constraint to Constructors
+
+public class Utilities<T> where T : IComparable, new() // You can add multiple constraints
+{
+    public T Max<T>(T a, T b)
+    {
+        return a.CompareTo(b) > 0 ? a : b;
+    }
+
+    public DoSomething(T value)
+    {
+        var obj = new T(); // The new() constraints allows us to initialize T objects
+    }
+}
+
+-   Constraint to a Class
+
+public class DiscountCalculator<TProduct> where TProduct : Product // Gives us access to all Product properties.
+{                                                                  // We know we're going to receive a Product object before runtime.
+    public float CalculateDiscount(TProduct product)
+    {
+        return product.ProductMethod();
+    }
+}
+
+-   Constraint to a Value Type
+
+public class Nullable<T> where T : struct // "Where T is a value type"
+{
+    private object _value;
+
+    public Nullable()
+    {
+    }
+
+    public Nullable(T value)
+    {
+        this._value = value;
+    }
+
+    public bool HasValue
+    {
+        get { return _value != null; }
+    }
+
+    public T GetValueOrDefault()
+    {
+        if (HasValue)
+            return (T)_value; // Casts value to a struct, because it was stored as an object
+
+        return default(T); // Returns default value of T
+    }
+}
+
+This was just an example, Nullable already exists in .NET Framework
